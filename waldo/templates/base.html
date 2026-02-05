@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Waldo{% endblock %}</title>
+</head>
+<body>
+
+    <header>
+        <h1>Waldo</h1>
+
+        {% if user.is_authenticated %}
+            <p>
+                Connecté en tant que <strong>{{ user.username }}</strong>
+            </p>
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Se déconnecter</button>
+            </form>
+        {% endif %}
+    </header>
+
+    <hr>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

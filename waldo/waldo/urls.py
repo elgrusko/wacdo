@@ -22,6 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # use an already built-in login view from django instead of creating our own
     path('login/', auth_views.LoginView.as_view(), name='login'),
+    # same for logout view
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('protected/', account_views.protected_view, name='protected'),
     path('admin-only/', account_views.admin_only_view, name='admin-only'),
 ]

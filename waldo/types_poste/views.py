@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import TypePosteForm
 from .models import TypePoste
 from accounts.decorators import admin_required
@@ -22,3 +22,18 @@ def list_type_poste(request):
     postes = TypePoste.objects.order_by('label')
     print(f"Retrieved {postes.count()} postes from the database.")
     return render(request, 'types_poste/list.html', {'postes': postes})
+
+@admin_required
+def edit_type_poste(request, poste_id):
+    poste = get_object_or_404(TypePoste, pk=poste_id)
+    if request.method == "POST":
+        # 'instance' is used to tell the form that we want to update the existing poste instead of creating a new one
+        form = TypePosteForm(request.POST, instance=poste)
+        if form.is_valid():
+            form.save()
+            return redirect('type_poste_list')
+    else:
+        # 'instance' is used to pre-populate the form with the existing data of the poste we want to edit
+        form = TypePosteForm(instance=poste)
+
+    return render(request, 'types_poste/edit.html', {'form': form, 'poste': poste})

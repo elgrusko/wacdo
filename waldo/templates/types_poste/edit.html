@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+    
+{% block title %}Modifier un type de poste{% endblock %}
+
+{% block content %}
+    <h2>Modifier le type de poste : {{ poste.label }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Enregistrer les modifications</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des types de poste - Waldo{% endblock %}
+
+{% block content %}
+    <h2>Liste des types de poste</h2>
+
+    <a href="{% url 'type_poste_create' %}">Créer un nouveau type de poste</a>
+
+    <ul>
+        {% for poste in postes %}
+            <li><a href="{% url 'type_poste_edit' poste.id %}"">{{ poste.label }}</a></li>
+        {% empty %}
+            <li>Aucun type de poste trouvé.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

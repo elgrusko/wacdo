@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Restaurants{% endblock %}
+
+{% block content %}
+    <h2>Restaurants</h2>
+
+    <p>
+        <a href="{% url 'create_restaurant' %}">
+            ➕ Créer un restaurant
+        </a>
+    </p>
+
+    {% if restaurants %}
+        <ul>
+            {% for restaurant in restaurants %}
+                <li>
+                    {{ restaurant.name }} — {{ restaurant.city }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun restaurant enregistré.</p>
+    {% endif %}
+{% endblock %}

@@ -15,7 +15,10 @@
         <ul>
             {% for restaurant in restaurants %}
                 <li>
-                    {{ restaurant.name }} — {{ restaurant.city }}
+                    <a href="{% url 'detail_restaurant' restaurant.id %}">
+                        {{ restaurant.name }}
+                    </a>
+                    — {{ restaurant.city }}
                 </li>
             {% endfor %}
         </ul>

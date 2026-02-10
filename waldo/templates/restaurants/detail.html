@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ restaurant.name }}{% endblock %}
+
+{% block content %}
+    <h2>{{ restaurant.name }}</h2>
+
+    <ul>
+        <li><strong>Adresse :</strong> {{ restaurant.address }}</li>
+        <li><strong>Code postal :</strong> {{ restaurant.postal_code }}</li>
+        <li><strong>Ville :</strong> {{ restaurant.city }}</li>
+    </ul>
+
+    <p>
+        <a href="{% url 'list_restaurants' %}">
+            ⬅ Retour à la liste des restaurants
+        </a>
+    </p>
+{% endblock %}

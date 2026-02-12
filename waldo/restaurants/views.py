@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RestaurantForm
+from .forms import RestaurantForm, RestaurantSearchForm
 from .models import Restaurant
 from accounts.decorators import admin_required
 
@@ -16,8 +16,34 @@ def restaurant_create(request):
 
 @admin_required
 def restaurant_list(request):
-    restaurants = Restaurant.objects.order_by('name')
-    return render(request, 'restaurants/list.html', {'restaurants': restaurants})
+    # Get all restaurants (il all cases)
+    restaurants = Restaurant.objects.all().order_by('name')
+    # Initialize the search form with GET parameters (if any)
+    form = RestaurantSearchForm(request.GET)
+
+    if form.is_valid():
+        name = form.cleaned_data.get('name')
+        city = form.cleaned_data.get('city')
+        postal_code = form.cleaned_data.get('postal_code')
+
+        if name:
+            #Use __icontains for case-insensitive partial matching
+            restaurants = restaurants.filter(name__icontains=name)
+
+        if city:
+            restaurants = restaurants.filter(city__icontains=city)
+
+        if postal_code:
+            restaurants = restaurants.filter(postal_code__icontains=postal_code)
+
+    return render(
+        request,
+        'restaurants/list.html',
+        {
+            'restaurants': restaurants,
+            'form': form
+        }
+    )
 
 @admin_required
 def restaurant_detail(request, restaurant_id):

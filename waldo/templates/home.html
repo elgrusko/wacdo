@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+    <h2>Tableau de bord</h2>
+
+    <ul>
+        <li><a href="{% url 'list_restaurants' %}">Restaurants</a></li>
+        <li><a href="{% url 'type_poste_list' %}">Types de poste</a></li>
+    </ul>
+{% endblock %}

@@ -31,7 +31,7 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # login/logout settings
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = '/admin/'
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 
 # Application definition

@@ -10,3 +10,7 @@ def protected_view(request):
 @admin_required
 def admin_only_view(request):
     return HttpResponse("This is an admin-only view. You have admin privileges.")
+
+@login_required
+def home(request): 
+    return render(request, 'home.html')

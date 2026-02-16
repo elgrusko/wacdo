@@ -1,0 +1,29 @@
+from django import forms
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class CollaboratorCreationForm(forms.ModelForm):
+    # PasswordInput widget to render the password field as a password input (with dots instead of characters)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'date_first_hired',
+            'is_admin',
+            'password',
+        ]
+
+    # override the save method to set the password correctly (hash it) before saving the user to the database
+    def save(self, commit=True):
+        # commit=False to get the user instance without saving it to the database yet, so we can set the password correctly before saving
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+        return user

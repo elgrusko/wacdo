@@ -29,4 +29,5 @@ urlpatterns = [
     path('types_poste/', include('types_poste.urls')),
     path('restaurants/', include('restaurants.urls')),
     path('', account_views.home, name='home'),
+    path('collaborateurs/', include('accounts.urls')),
 ]

@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .decorators import admin_required
 from django.contrib.auth.decorators import login_required
+from .forms import CollaboratorCreationForm
+from .decorators import admin_required
 
 @login_required
 def protected_view(request):
@@ -14,3 +16,19 @@ def admin_only_view(request):
 @login_required
 def home(request): 
     return render(request, 'home.html')
+
+@admin_required
+def create_collaborator(request):
+    if request.method == "POST":
+        form = CollaboratorCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = CollaboratorCreationForm()
+
+    return render(
+        request,
+        'accounts/create_collaborator.html',
+        {'form': form}
+    )

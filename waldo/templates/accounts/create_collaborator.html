@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+    
+{% block title %}Ajouter un collaborateur{% endblock %}
+
+{% block content %}
+    <h2>Ajouter un collaborateur</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Ajouter le collaborateur</button>
+    </form>
+
+    <p>
+        <a href="{% url 'collaborator_list' %}">
+            ⬅ Retour à la liste des collaborateurs
+        </a>
+    </p>
+{% endblock %}

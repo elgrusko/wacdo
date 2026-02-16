@@ -49,3 +49,15 @@ def restaurant_list(request):
 def restaurant_detail(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
     return render(request, 'restaurants/detail.html', {'restaurant': restaurant})
+
+@admin_required
+def restaurant_edit(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+    if request.method == 'POST':
+        form = RestaurantForm(request.POST, instance=restaurant)
+        if form.is_valid():
+            form.save()
+            return redirect('detail_restaurant', restaurant_id=restaurant.id)
+    else:
+        form = RestaurantForm(instance=restaurant)
+    return render(request, 'restaurants/edit.html', {'form': form, 'restaurant': restaurant})

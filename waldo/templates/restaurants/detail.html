@@ -5,6 +5,9 @@
 {% block content %}
     <h2>{{ restaurant.name }}</h2>
 
+    <a href="{% url 'edit_restaurant' restaurant.id %}">
+        ✏️ Modifier
+    </a>
     <ul>
         <li><strong>Adresse :</strong> {{ restaurant.address }}</li>
         <li><strong>Code postal :</strong> {{ restaurant.postal_code }}</li>

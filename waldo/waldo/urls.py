@@ -24,10 +24,8 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(), name='login'),
     # same for logout view
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('protected/', account_views.protected_view, name='protected'),
-    path('admin-only/', account_views.admin_only_view, name='admin-only'),
     path('types_poste/', include('types_poste.urls')),
     path('restaurants/', include('restaurants.urls')),
-    path('', account_views.home, name='home'),
+    path('', include('core.urls')),
     path('collaborateurs/', include('accounts.urls')),
 ]

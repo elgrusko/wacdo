@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+    
+{% block title %}Détails du collaborateur{% endblock %}
+
+{% block content %}
+    <h2>Détails du collaborateur</h2>
+
+    <a href="#">
+        ✏️ Modifier
+    </a>
+    <ul>
+        <li><strong>Nom :</strong> {{ collaborator.first_name }} {{ collaborator.last_name }}</li>
+        <li><strong>Email :</strong> {{ collaborator.email }}</li>
+        <li><strong>Type de poste :</strong> {{ collaborator.type_poste.name }}</li>
+    </ul>
+
+    <p>
+        <a href="{% url 'collaborator_list' %}">
+            ⬅ Retour à la liste des collaborateurs
+        </a>
+    </p>
+{% endblock %}

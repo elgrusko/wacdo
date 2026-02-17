@@ -19,7 +19,7 @@
     <ul>
         {% for collaborator in collaborators %}
             <li>
-                <a href="#">
+                <a href="{% url 'collaborator_detail' collaborator.id %}">
                     {{ collaborator.first_name }} {{ collaborator.last_name }}
                 </a>
                 - {{ collaborator.email }}

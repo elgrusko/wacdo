@@ -57,3 +57,8 @@ def list_collaborators(request):
             'form': form
         }
     )
+
+@admin_required
+def detail_collaborator(request, collaborator_id):
+    collaborator = User.objects.get(pk=collaborator_id)
+    return render(request, 'accounts/detail_collaborator.html', {'collaborator': collaborator})

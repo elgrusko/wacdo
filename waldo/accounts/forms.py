@@ -27,3 +27,9 @@ class CollaboratorCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+class CollaboratorSearchForm(forms.Form):
+    username = forms.CharField(required=False, label="Nom d'utilisateur")
+    first_name = forms.CharField(required=False, label="Prénom")
+    last_name = forms.CharField(required=False, label="Nom de famille")
+    email = forms.CharField(required=False, label="Email")

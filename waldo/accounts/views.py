@@ -2,8 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .decorators import admin_required
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from .forms import CollaboratorCreationForm
 from .decorators import admin_required
+
+User = get_user_model()
 
 @login_required
 def protected_view(request):
@@ -31,4 +34,13 @@ def create_collaborator(request):
         request,
         'accounts/create_collaborator.html',
         {'form': form}
+    )
+
+@admin_required
+def list_collaborators(request):
+    collaborators = User.objects.all().order_by('username')
+    return render(
+        request,
+        'accounts/list_collaborators.html',
+        {'collaborators': collaborators}
     )

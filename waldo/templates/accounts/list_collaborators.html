@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+    
+{% block title %}Liste des collaborateurs{% endblock %}
+
+{% block content %}
+    <h2>Liste des collaborateurs</h2>
+
+    <a href="{% url 'collaborator_create' %}">
+        ➕ Ajouter un collaborateur
+    </a>
+
+    <ul>
+        {% for collaborator in collaborators %}
+            <li>
+                <a href="#">
+                    {{ collaborator.first_name }} {{ collaborator.last_name }}
+                </a>
+                - {{ collaborator.email }}
+            </li>
+        {% empty %}
+            <li>Aucun collaborateur trouvé.</li>
+        {% endfor %}
+    </ul>
+
+    <p>
+        <a href="{% url 'home' %}">
+            ⬅ Retour au tableau de bord
+        </a>
+    </p>
+{% endblock %}

@@ -10,4 +10,9 @@
         {{ form.as_p }}
         <button type="submit">Créer</button>
     </form>
+
+    <a href="{% url 'type_poste_list' %}">
+        ⬅ Retour à la liste des postes
+    </a>
+
 {% endblock %}

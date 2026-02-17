@@ -34,4 +34,9 @@
     {% else %}
         <p>Aucun restaurant enregistré.</p>
     {% endif %}
+    <p>
+        <a href="{% url 'home' %}">
+            ⬅ Retour au tableau de bord
+        </a>
+    </p>
 {% endblock %}

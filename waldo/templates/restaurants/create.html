@@ -10,4 +10,10 @@
         {{ form.as_p }}
         <button type="submit">Créer</button>
     </form>
+
+    <p>
+        <a href="{% url 'list_restaurants' %}">
+            ⬅ Retour à la liste des restaurants
+        </a>
+    </p>
 {% endblock %}

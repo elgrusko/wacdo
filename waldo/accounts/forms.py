@@ -43,3 +43,4 @@ class CollaboratorSearchForm(forms.Form):
     first_name = forms.CharField(required=False, label="Prénom")
     last_name = forms.CharField(required=False, label="Nom de famille")
     email = forms.CharField(required=False, label="Email")
+    unassigned_only = forms.BooleanField(required=False, label="Seulement les collaborateurs non affectés")

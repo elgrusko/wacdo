@@ -35,6 +35,7 @@ def list_collaborators(request):
         first_name = form.cleaned_data.get('first_name')
         last_name = form.cleaned_data.get('last_name')
         email = form.cleaned_data.get('email')
+        unassigned_only = form.cleaned_data.get('unassigned_only')
 
         if username:
             # Use __icontains for case-insensitive partial matching
@@ -48,6 +49,9 @@ def list_collaborators(request):
 
         if email:
             collaborators = collaborators.filter(email__icontains=email)
+
+        if unassigned_only:
+            collaborators = collaborators.filter(affectations__isnull=True)
 
     return render(
         request,

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'accounts',
     'types_poste',
     'restaurants',
+    'affectations',
 ]
 
 MIDDLEWARE = [

@@ -19,11 +19,21 @@ class CollaboratorCreationForm(forms.ModelForm):
             'password',
         ]
 
+    # In edit mode, password can be left empty to keep the current password.
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Instance with PK means we are in edit mode, so we make the password field not required and add a help text to indicate that leaving it empty will keep the current password.
+        if self.instance and self.instance.pk:
+            self.fields['password'].required = False
+            self.fields['password'].help_text = "Laissez vide pour conserver le mot de passe actuel."
+
     # override the save method to set the password correctly (hash it) before saving the user to the database
     def save(self, commit=True):
         # commit=False to get the user instance without saving it to the database yet, so we can set the password correctly before saving
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password'])
+        password = self.cleaned_data.get('password')
+        if password:
+            user.set_password(password)
         if commit:
             user.save()
         return user

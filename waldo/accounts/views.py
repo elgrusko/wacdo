@@ -62,3 +62,20 @@ def list_collaborators(request):
 def detail_collaborator(request, collaborator_id):
     collaborator = User.objects.get(pk=collaborator_id)
     return render(request, 'accounts/detail_collaborator.html', {'collaborator': collaborator})
+
+@admin_required
+def edit_collaborator(request, collaborator_id):
+    collaborator = User.objects.get(pk=collaborator_id)
+    if request.method == "POST":
+        form = CollaboratorCreationForm(request.POST, instance=collaborator)
+        if form.is_valid():
+            form.save()
+            return redirect('collaborator_detail', collaborator_id=collaborator.id)
+    else:
+        form = CollaboratorCreationForm(instance=collaborator)
+
+    return render(
+        request,
+        'accounts/edit_collaborator.html',
+        {'form': form, 'collaborator': collaborator}
+    )

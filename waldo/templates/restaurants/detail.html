@@ -5,6 +5,12 @@
 {% block content %}
     <h2>{{ restaurant.name }}</h2>
 
+    <p>
+    <a href="{% url 'affectation_create_for_restaurant' restaurant.id %}">
+        ➕ Affecter un collaborateur
+    </a>
+    </p>
+
     <a href="{% url 'edit_restaurant' restaurant.id %}">
         ✏️ Modifier
     </a>

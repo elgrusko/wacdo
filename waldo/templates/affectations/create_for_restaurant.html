@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Affecter un collaborateur{% endblock %}
+
+{% block content %}
+  <h2>Affecter un collaborateur</h2>
+  <p><strong>Restaurant :</strong> {{ restaurant.name }} — {{ restaurant.city }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Créer l’affectation</button>
+  </form>
+
+  <p>
+    <a href="{% url 'detail_restaurant' restaurant.id %}">⬅ Retour au restaurant</a>
+  </p>
+{% endblock %}

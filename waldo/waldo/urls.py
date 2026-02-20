@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from accounts import views as account_views
+from affectations import views as affectation_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,4 +29,5 @@ urlpatterns = [
     path('restaurants/', include('restaurants.urls')),
     path('', include('core.urls')),
     path('collaborateurs/', include('accounts.urls')),
+    path("affectations/", include("affectations.urls")),
 ]

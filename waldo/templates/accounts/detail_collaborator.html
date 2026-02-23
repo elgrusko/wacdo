@@ -11,8 +11,43 @@
     <ul>
         <li><strong>Nom :</strong> {{ collaborator.first_name }} {{ collaborator.last_name }}</li>
         <li><strong>Email :</strong> {{ collaborator.email }}</li>
-        <li><strong>Type de poste :</strong> {{ collaborator.type_poste.name }}</li>
+        <li><strong>Date d'embauche :</strong> {{ collaborator.date_first_hired|default:"-" }}</li>
     </ul>
+
+    <h3>Filtres des affectations</h3>
+    <form method="get">
+        {{ filter_form.as_p }}
+        <button type="submit">Filtrer</button>
+    </form>
+
+    <h3>Affectations en cours</h3>
+    {% if active_affectations %}
+        <ul>
+            {% for affectation in active_affectations %}
+                <li>
+                    {{ affectation.position_type }} - {{ affectation.restaurant }}
+                    (depuis le {{ affectation.start_date }})
+                    {% if affectation.end_date %}jusqu'au {{ affectation.end_date }}{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune affectation en cours.</p>
+    {% endif %}
+
+    <h3>Historique des affectations</h3>
+    {% if affectation_history %}
+        <ul>
+            {% for affectation in affectation_history %}
+                <li>
+                    {{ affectation.position_type }} - {{ affectation.restaurant }}
+                    (du {{ affectation.start_date }} au {{ affectation.end_date }})
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun historique d'affectation.</p>
+    {% endif %}
 
     <p>
         <a href="{% url 'collaborator_list' %}">

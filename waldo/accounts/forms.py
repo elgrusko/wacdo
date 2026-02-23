@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from types_poste.models import TypePoste
 
 User = get_user_model()
 
@@ -44,3 +45,18 @@ class CollaboratorSearchForm(forms.Form):
     last_name = forms.CharField(required=False, label="Nom de famille")
     email = forms.CharField(required=False, label="Email")
     unassigned_only = forms.BooleanField(required=False, label="Seulement les collaborateurs non affectés")
+
+
+class CollaboratorAffectationFilterForm(forms.Form):
+    position_type = forms.ModelChoiceField(
+        # queryset to get all position types ordered by label
+        queryset=TypePoste.objects.order_by("label"),
+        required=False,
+        label="Type de poste",
+        empty_label="Tous les postes",
+    )
+    start_date = forms.DateField(
+        required=False,
+        label="Date de début",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )

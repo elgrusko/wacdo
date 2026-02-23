@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from .decorators import admin_required
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from .forms import CollaboratorCreationForm, CollaboratorSearchForm
-from .decorators import admin_required
+from django.db.models import Q
+from django.utils import timezone
+from .forms import (
+    CollaboratorCreationForm,
+    CollaboratorSearchForm,
+    CollaboratorAffectationFilterForm,
+)
 
 User = get_user_model()
 
@@ -64,8 +67,42 @@ def list_collaborators(request):
 
 @admin_required
 def detail_collaborator(request, collaborator_id):
-    collaborator = User.objects.get(pk=collaborator_id)
-    return render(request, 'accounts/detail_collaborator.html', {'collaborator': collaborator})
+    collaborator = get_object_or_404(User, pk=collaborator_id)
+    affectations = collaborator.affectations.select_related(
+        "restaurant",
+        "position_type",
+    )
+    filter_form = CollaboratorAffectationFilterForm(request.GET)
+
+    if filter_form.is_valid():
+        position_type = filter_form.cleaned_data.get("position_type")
+        start_date = filter_form.cleaned_data.get("start_date")
+
+        if position_type:
+            affectations = affectations.filter(position_type=position_type)
+
+        if start_date:
+            affectations = affectations.filter(start_date=start_date)
+
+    today = timezone.localdate()
+    # Get only affectations that are currently active (no end date or end date in the future)
+    active_affectations = affectations.filter(
+        Q(end_date__isnull=True) | Q(end_date__gte=today)
+    )
+
+    # Get affectations that have ended in the past (end date before today)
+    affectation_history = affectations.filter(end_date__lt=today)
+
+    return render(
+        request,
+        'accounts/detail_collaborator.html',
+        {
+            'collaborator': collaborator,
+            'filter_form': filter_form,
+            'active_affectations': active_affectations,
+            'affectation_history': affectation_history,
+        },
+    )
 
 @admin_required
 def edit_collaborator(request, collaborator_id):

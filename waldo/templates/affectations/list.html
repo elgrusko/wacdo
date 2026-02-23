@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des affectations{% endblock %}
+
+{% block content %}
+    <h2>Liste des affectations</h2>
+
+    <h3>Recherche</h3>
+    <form method="get">
+        {{ form.as_p }}
+        <button type="submit">Rechercher</button>
+    </form>
+
+    {% if affectations %}
+        <ul>
+            {% for affectation in affectations %}
+                <li>
+                    <strong>{{ affectation.collaborator }}</strong>
+                    - {{ affectation.position_type }}
+                    - {{ affectation.restaurant.name }} ({{ affectation.restaurant.city }})
+                    - début: {{ affectation.start_date }}
+                    - fin: {{ affectation.end_date|default:"en cours" }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune affectation trouvée.</p>
+    {% endif %}
+
+    <p>
+        <a href="{% url 'home' %}">
+            ⬅ Retour au tableau de bord
+        </a>
+    </p>
+{% endblock %}

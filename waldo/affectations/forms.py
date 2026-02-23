@@ -1,6 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
+from types_poste.models import TypePoste
+
 from .models import Affectation
 
 class AffectationCreateForm(forms.ModelForm):
@@ -47,3 +49,23 @@ class AffectationCreateForm(forms.ModelForm):
         if commit:
             obj.save()
         return obj
+
+
+class AffectationSearchForm(forms.Form):
+    position_type = forms.ModelChoiceField(
+        queryset=TypePoste.objects.order_by("label"),
+        required=False,
+        label="Type de poste",
+        empty_label="Tous les postes",
+    )
+    start_date = forms.DateField(
+        required=False,
+        label="Date de début",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    end_date = forms.DateField(
+        required=False,
+        label="Date de fin",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    city = forms.CharField(required=False, label="Ville")

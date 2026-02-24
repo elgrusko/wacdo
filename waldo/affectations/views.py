@@ -1,8 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import get_user_model
 from accounts.decorators import admin_required
 from .models import Affectation
 from restaurants.models import Restaurant
-from .forms import AffectationCreateForm, AffectationSearchForm
+from .forms import (
+    AffectationCreateForm,
+    AffectationSearchForm,
+    CollaboratorAffectationCreateForm,
+)
+
+User = get_user_model()
 
 
 @admin_required
@@ -57,4 +64,23 @@ def create_affectation_for_restaurant(request, restaurant_pk):
         request,
         "affectations/create_for_restaurant.html",
         {"form": form, "restaurant": restaurant},
+    )
+
+
+@admin_required
+def create_affectation_for_collaborator(request, collaborator_pk):
+    collaborator = get_object_or_404(User, pk=collaborator_pk)
+
+    if request.method == "POST":
+        form = CollaboratorAffectationCreateForm(request.POST, collaborator=collaborator)
+        if form.is_valid():
+            form.save()
+            return redirect("collaborator_detail", collaborator_id=collaborator.id)
+    else:
+        form = CollaboratorAffectationCreateForm(collaborator=collaborator)
+
+    return render(
+        request,
+        "affectations/create_for_collaborator.html",
+        {"form": form, "collaborator": collaborator},
     )

@@ -8,6 +8,10 @@
     <a href="{% url 'collaborator_edit' collaborator.id %}">
         ✏️ Modifier
     </a>
+    <br>
+    <a href="{% url 'affectation_create_for_collaborator' collaborator.id %}">
+        ➕ Affecter le collaborateur a un restaurant
+    </a>
     <ul>
         <li><strong>Nom :</strong> {{ collaborator.first_name }} {{ collaborator.last_name }}</li>
         <li><strong>Email :</strong> {{ collaborator.email }}</li>

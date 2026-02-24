@@ -18,6 +18,10 @@
                 {% csrf_token %}
                 <button type="submit">Se déconnecter</button>
             </form>
+            <form method="post" action="{% url 'home' %}">
+                {% csrf_token %}
+                <button type="submit">Tableau de bord</button>
+            </form>
         {% endif %}
     </header>
 

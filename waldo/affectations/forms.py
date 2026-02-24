@@ -1,9 +1,23 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.utils import timezone
 
 from types_poste.models import TypePoste
 
 from .models import Affectation
+
+
+def _has_other_active_affectation(collaborator, exclude_pk=None):
+    today = timezone.localdate()
+    queryset = Affectation.objects.filter(collaborator=collaborator).filter(
+        Q(end_date__isnull=True) | Q(end_date__gte=today)
+    )
+    # If exclude_pk is provided, we exclude that specific affectation from the check (useful when updating an existing affectation)
+    if exclude_pk is not None:
+        queryset = queryset.exclude(pk=exclude_pk)
+    return queryset.exists()
+
 
 class AffectationCreateForm(forms.ModelForm):
     class Meta:
@@ -20,23 +34,19 @@ class AffectationCreateForm(forms.ModelForm):
         collaborator = cleaned.get("collaborator")
         start_date = cleaned.get("start_date")
         end_date = cleaned.get("end_date")
+        today = timezone.localdate()
+        is_active = end_date is None or end_date >= today
 
         # Rule A : end_date must be after start_date (if end_date is provided)
         if start_date and end_date and end_date < start_date:
             raise ValidationError("La date de fin doit être postérieure ou égale à la date de début.")
 
         # Rule B : a collaborator cannot have more than one active affectation (end_date is null or in the future)
-        if collaborator:
-            existing = Affectation.objects.filter(
-                collaborator=collaborator,
-                end_date__isnull=True,
+        if collaborator and is_active and _has_other_active_affectation(collaborator):
+            raise ValidationError(
+                "Ce collaborateur a déjà une affectation en cours. "
+                "Clôture l’affectation actuelle avant d’en créer une nouvelle."
             )
-
-            if existing.exists():
-                raise ValidationError(
-                    "Ce collaborateur a déjà une affectation en cours. "
-                    "Clôture l’affectation actuelle avant d’en créer une nouvelle."
-                )
 
         return cleaned
 
@@ -64,23 +74,19 @@ class CollaboratorAffectationCreateForm(forms.ModelForm):
         cleaned = super().clean()
         start_date = cleaned.get("start_date")
         end_date = cleaned.get("end_date")
+        today = timezone.localdate()
+        is_active = end_date is None or end_date >= today
 
         # Rule A : end_date must be after start_date (if end_date is provided)
         if start_date and end_date and end_date < start_date:
             raise ValidationError("La date de fin doit être postérieure ou égale à la date de début.")
 
         # Rule B : a collaborator cannot have more than one active affectation
-        if self.collaborator:
-            existing = Affectation.objects.filter(
-                collaborator=self.collaborator,
-                end_date__isnull=True,
+        if self.collaborator and is_active and _has_other_active_affectation(self.collaborator):
+            raise ValidationError(
+                "Ce collaborateur a déjà une affectation en cours. "
+                "Clôture l’affectation actuelle avant d’en créer une nouvelle."
             )
-
-            if existing.exists():
-                raise ValidationError(
-                    "Ce collaborateur a déjà une affectation en cours. "
-                    "Clôture l’affectation actuelle avant d’en créer une nouvelle."
-                )
 
         return cleaned
 
@@ -114,3 +120,29 @@ class AffectationSearchForm(forms.Form):
         widget=forms.DateInput(attrs={"type": "date"}),
     )
     city = forms.CharField(required=False, label="Ville")
+
+
+class AffectationUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Affectation
+        fields = ["end_date"]
+        widgets = {
+            "end_date": forms.DateInput(attrs={"type": "date"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["end_date"].required = True
+        # Keep end_date empty by default on GET to force an explicit closure date.
+        if not self.is_bound and self.instance and self.instance.pk:
+            self.initial["end_date"] = None
+
+    def clean(self):
+        cleaned = super().clean()
+        end_date = cleaned.get("end_date")
+        start_date = self.instance.start_date if self.instance else None
+
+        if end_date and start_date and end_date < start_date:
+            raise ValidationError("La date de fin doit être postérieure ou égale à la date de début.")
+
+        return cleaned

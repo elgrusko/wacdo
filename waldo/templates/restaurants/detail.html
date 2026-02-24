@@ -35,6 +35,7 @@
                     </a>
                     - {{ affectation.position_type }}
                     (depuis le {{ affectation.start_date }})
+                    - <a href="{% url 'affectation_update' affectation.id %}">Modifier</a>
                 </li>
             {% endfor %}
         </ul>

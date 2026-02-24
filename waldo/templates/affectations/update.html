@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier une affectation{% endblock %}
+
+{% block content %}
+    <h2>Modifier une affectation en cours</h2>
+
+    <p><strong>Collaborateur :</strong> {{ affectation.collaborator }}</p>
+    <p><strong>Restaurant :</strong> {{ affectation.restaurant }}</p>
+    <p><strong>Poste :</strong> {{ affectation.position_type }}</p>
+    <p><strong>Date de début :</strong> {{ affectation.start_date }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Clôturer</button>
+    </form>
+
+    <p>
+        <a href="{% url 'detail_restaurant' affectation.restaurant.id %}">
+            ⬅ Retour au restaurant
+        </a>
+    </p>
+    <p>
+        <a href="{% url 'collaborator_detail' affectation.collaborator.id %}">
+            ⬅ Retour au collaborateur
+        </a>
+    </p>
+{% endblock %}

@@ -32,6 +32,7 @@
                     {{ affectation.position_type }} - {{ affectation.restaurant }}
                     (depuis le {{ affectation.start_date }})
                     {% if affectation.end_date %}jusqu'au {{ affectation.end_date }}{% endif %}
+                    - <a href="{% url 'affectation_update' affectation.id %}">Modifier</a>
                 </li>
             {% endfor %}
         </ul>

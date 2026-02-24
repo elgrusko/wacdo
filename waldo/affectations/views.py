@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
+from django.db.models import Q
+from django.utils import timezone
 from accounts.decorators import admin_required
 from .models import Affectation
 from restaurants.models import Restaurant
@@ -7,6 +9,7 @@ from .forms import (
     AffectationCreateForm,
     AffectationSearchForm,
     CollaboratorAffectationCreateForm,
+    AffectationUpdateForm,
 )
 
 User = get_user_model()
@@ -47,6 +50,39 @@ def list_affectations(request):
             "form": form,
         },
     )
+
+
+@admin_required
+def affectation_update(request, pk):
+    today = timezone.localdate()
+    affectation = get_object_or_404(
+        Affectation.objects.select_related(
+            "collaborator",
+            "restaurant",
+            "position_type",
+        ).filter(
+            Q(end_date__isnull=True) | Q(end_date__gte=today)
+        ),
+        pk=pk,
+    )
+
+    if request.method == "POST":
+        form = AffectationUpdateForm(request.POST, instance=affectation)
+        if form.is_valid():
+            form.save()
+            return redirect("detail_restaurant", restaurant_id=affectation.restaurant_id)
+    else:
+        form = AffectationUpdateForm(instance=affectation)
+
+    return render(
+        request,
+        "affectations/update.html",
+        {
+            "form": form,
+            "affectation": affectation,
+        },
+    )
+
 
 @admin_required
 def create_affectation_for_restaurant(request, restaurant_pk):

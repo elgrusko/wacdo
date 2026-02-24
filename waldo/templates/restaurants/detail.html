@@ -20,6 +20,28 @@
         <li><strong>Ville :</strong> {{ restaurant.city }}</li>
     </ul>
 
+    <h3>Collaborateurs en poste</h3>
+    <form method="get">
+        {{ filter_form.as_p }}
+        <button type="submit">Filtrer</button>
+    </form>
+
+    {% if active_affectations %}
+        <ul>
+            {% for affectation in active_affectations %}
+                <li>
+                    <a href="{% url 'collaborator_detail' affectation.collaborator.id %}">
+                        {{ affectation.collaborator.first_name }} {{ affectation.collaborator.last_name }}
+                    </a>
+                    - {{ affectation.position_type }}
+                    (depuis le {{ affectation.start_date }})
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun collaborateur en poste pour ce restaurant.</p>
+    {% endif %}
+
     <p>
         <a href="{% url 'list_restaurants' %}">
             ⬅ Retour à la liste des restaurants

@@ -9,7 +9,7 @@
 
     <ul>
         {% for poste in postes %}
-            <li><a href="{% url 'type_poste_edit' poste.id %}"">{{ poste.label }}</a></li>
+            <li><a href="{% url 'type_poste_edit' poste.id %}">{{ poste.label }}</a></li>
         {% empty %}
             <li>Aucun type de poste trouvé.</li>
         {% endfor %}

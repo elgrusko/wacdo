@@ -7,15 +7,16 @@ from types_poste.models import TypePoste
 
 from .models import Affectation
 
-
 def _has_other_active_affectation(collaborator, exclude_pk=None):
     today = timezone.localdate()
+    # get all affectations for the collaborator that are active
     queryset = Affectation.objects.filter(collaborator=collaborator).filter(
         Q(end_date__isnull=True) | Q(end_date__gte=today)
     )
     # If exclude_pk is provided, we exclude that specific affectation from the check (useful when updating an existing affectation)
     if exclude_pk is not None:
         queryset = queryset.exclude(pk=exclude_pk)
+    # simpl return bool (exists or not)
     return queryset.exists()
 
 
@@ -35,6 +36,7 @@ class AffectationCreateForm(forms.ModelForm):
         start_date = cleaned.get("start_date")
         end_date = cleaned.get("end_date")
         today = timezone.localdate()
+        # is_active is True if end_date is not provided (None) or if end_date is in the future (greater or equal to today)
         is_active = end_date is None or end_date >= today
 
         # Rule A : end_date must be after start_date (if end_date is provided)
@@ -60,7 +62,7 @@ class AffectationCreateForm(forms.ModelForm):
             obj.save()
         return obj
 
-
+# Same validation rules as AffectationCreateForm, but without the restaurant since it's not created from the restaurant context but from the collaborator context.
 class CollaboratorAffectationCreateForm(forms.ModelForm):
     class Meta:
         model = Affectation

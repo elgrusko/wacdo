@@ -5,14 +5,26 @@
 {% block content %}
     <h2>Modifier le type de poste : {{ poste.label }}</h2>
 
+    {% if delete_error %}
+        <p class="alert-error">{{ delete_error }}</p>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Enregistrer les modifications</button>
     </form>
 
-    <a href="{% url 'type_poste_list' %}">
-        ⬅ Retour à la liste des postes
-    </a>
+    <form method="post" action="{% url 'type_poste_delete' poste.id %}" onsubmit="return confirm('Supprimer ce type de poste ?');">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger">Supprimer ce type de poste</button>
+    </form>
+
+    <div class="actions-row">
+        <a href="{% url 'type_poste_list' %}">
+            ⬅ Retour à la liste des postes
+        </a>
+
+    </div>
 
 {% endblock %}

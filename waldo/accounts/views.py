@@ -3,6 +3,7 @@ from .decorators import admin_required
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils import timezone
+from affectations.models import Affectation
 from .forms import (
     CollaboratorCreationForm,
     CollaboratorSearchForm,
@@ -54,7 +55,12 @@ def list_collaborators(request):
             collaborators = collaborators.filter(email__icontains=email)
 
         if unassigned_only:
-            collaborators = collaborators.filter(affectations__isnull=True)
+            today = timezone.localdate()
+            # active affectations are those with no end date or end date in the future
+            active_collaborator_ids = Affectation.objects.filter(
+                Q(end_date__isnull=True) | Q(end_date__gte=today)
+            ).values("collaborator_id") # get only the collaborator ids from active affectations
+            collaborators = collaborators.exclude(id__in=active_collaborator_ids) # exclude collaborators that have active affectations, so we get only unassigned collaborators
 
     return render(
         request,

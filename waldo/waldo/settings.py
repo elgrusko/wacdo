@@ -86,15 +86,12 @@ WSGI_APPLICATION = 'waldo.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQL_DATABASE', 'waldo'),
-        'USER': os.getenv('MYSQL_USER', 'root'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD', ''),
-        'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
-        'PORT': os.getenv('MYSQL_PORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', os.getenv('DB_NAME', 'waldo')),
+        'USER': os.getenv('POSTGRES_USER', os.getenv('DB_USER', 'postgres')),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', os.getenv('DB_PASSWORD', 'postgres')),
+        'HOST': os.getenv('POSTGRES_HOST', os.getenv('DB_HOST', '127.0.0.1')),
+        'PORT': os.getenv('POSTGRES_PORT', os.getenv('DB_PORT', '5432')),
     }
 }
 

@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,13 +22,30 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
+def env_bool(name, default=False):
+    return os.getenv(name, str(default)).strip().lower() in ('1', 'true', 'yes', 'on')
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3j@1#+4+2ao53pep$*=-k0go9dxr6%9(b7yw!i)=!r%puak(1$'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-3j@1#+4+2ao53pep$*=-k0go9dxr6%9(b7yw!i)=!r%puak(1$')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+allowed_hosts = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if host.strip()]
+render_hostname = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if render_hostname and render_hostname not in allowed_hosts:
+    allowed_hosts.append(render_hostname)
+ALLOWED_HOSTS = allowed_hosts
+
+csrf_trusted_origins = [origin.strip() for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if origin.strip()]
+if render_hostname:
+    render_origin = f'https://{render_hostname}'
+    if render_origin not in csrf_trusted_origins:
+        csrf_trusted_origins.append(render_origin)
+CSRF_TRUSTED_ORIGINS = csrf_trusted_origins
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -52,6 +71,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,15 +104,20 @@ WSGI_APPLICATION = 'waldo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+default_db_url = (
+    f"postgresql://{os.getenv('POSTGRES_USER', os.getenv('DB_USER', 'postgres'))}:"
+    f"{os.getenv('POSTGRES_PASSWORD', os.getenv('DB_PASSWORD', 'postgres'))}@"
+    f"{os.getenv('POSTGRES_HOST', os.getenv('DB_HOST', '127.0.0.1'))}:"
+    f"{os.getenv('POSTGRES_PORT', os.getenv('DB_PORT', '5432'))}/"
+    f"{os.getenv('POSTGRES_DB', os.getenv('DB_NAME', 'waldo'))}"
+)
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', os.getenv('DB_NAME', 'waldo')),
-        'USER': os.getenv('POSTGRES_USER', os.getenv('DB_USER', 'postgres')),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', os.getenv('DB_PASSWORD', 'postgres')),
-        'HOST': os.getenv('POSTGRES_HOST', os.getenv('DB_HOST', '127.0.0.1')),
-        'PORT': os.getenv('POSTGRES_PORT', os.getenv('DB_PORT', '5432')),
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL', default_db_url),
+        conn_max_age=600,
+        ssl_require=not DEBUG,
+    )
 }
 
 
@@ -133,6 +158,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

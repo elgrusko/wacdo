@@ -15,7 +15,7 @@
         <ul>
             {% for affectation in affectations %}
                 <li>
-                    <strong>{{ affectation.collaborator }}</strong>
+                    <strong><a href="{% url 'collaborator_detail' affectation.collaborator.id %}">{{ affectation.collaborator.first_name }} {{ affectation.collaborator.last_name }}</a></strong>
                     - {{ affectation.position_type }}
                     - {{ affectation.restaurant.name }} ({{ affectation.restaurant.city }})
                     - début: {{ affectation.start_date }}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Wacdo{% endblock %}</title>
+    <title>{% block title %}<a href="{% url 'home' %}">Wacdo</a>{% endblock %}</title>
     <style>
         :root {
             --bg: #f4f7fb;
@@ -330,14 +330,13 @@
                 <p>
                     Connecté en tant que <strong>{{ user.username }}</strong>
                 </p>
-
+                 <form method="post" action="{% url 'home' %}">
+                    {% csrf_token %}
+                    <button type="submit">Tableau de bord</button>
+                </form>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button type="submit">Se déconnecter</button>
-                </form>
-                <form method="post" action="{% url 'home' %}">
-                    {% csrf_token %}
-                    <button type="submit">Tableau de bord</button>
                 </form>
             {% endif %}
         </header>

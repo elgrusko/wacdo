@@ -7,4 +7,5 @@ class User(AbstractUser):
     is_admin = models.BooleanField(default=False, verbose_name="Administrator status")
 
     def __str__(self):
-        return self.username
+        full_name = f"{self.first_name} {self.last_name}".strip()
+        return full_name or self.username
